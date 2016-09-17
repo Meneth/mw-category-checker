@@ -1,0 +1,23 @@
+{
+	"name": "Category Checker",
+	"version": "1.0",
+	"author": "Magne \"Meneth\" Skjæran",
+	"url": "https://github.com/meneth/mw-category-checker",
+	"description": "Gives a list of pages that haven't been added to a given category group (E.G., versioning)",
+	"type": "other",
+	"AutoloadClasses": {
+		"SpecialCategoryChecker": "SpecialCategoryChecker.php"
+	},
+	"SpecialPages": {
+		"CategoryChecker": "SpecialCategoryChecker"
+	},
+	"MessagesDirs": {
+		"CategoryChecker": [
+			"i18n"
+		]
+	},
+	"config": {
+		
+	},
+	"manifest_version": 1
+}
