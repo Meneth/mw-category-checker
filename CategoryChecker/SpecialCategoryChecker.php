@@ -26,24 +26,30 @@ class SpecialCategoryChecker extends SpecialPage {
 		]
 		);
 		
-		$filtered = [];
-		
+		$out = "";
 		foreach( $res as $row ) {
 			$page = WikiPage::newFromID( $row->page_id );
 			
-			if ( self::showPage( $page ) ) {
-				$filtered[] = $page;
+			if ( self::showVersionPage( $page ) ) {
+				self::appendPage( $page, $out );
 			}
 		}
+		$output->addWikiText( $out );
+		
+		$output->addWikiText( "\nThe following pages have no assessment.\n" );
 		
 		$out = "";
-		foreach( $filtered as $aPage ) {
-			$out .= "# [[" . $aPage->getTitle()->getText() . "]]\n";
+		foreach( $res as $row ) {
+			$page = WikiPage::newFromID( $row->page_id );
+			
+			if ( self::showAssessmentPage( $page ) ) {
+				self::appendPage( $page, $out );
+			}
 		}
 		$output->addWikiText( $out );
 	}
 	
-	static function showPage( WikiPage $page ) {
+	static function showVersionPage( WikiPage &$page ) {
 		$categories = $page->getCategories();
 		foreach( $categories as $category ) {
 			if ( $category->getText() == "Disambiguation"
@@ -61,5 +67,26 @@ class SpecialCategoryChecker extends SpecialPage {
 			}
 		}
 		return true;
+	}
+	
+	static function showAssessmentPage( WikiPage &$page ) {
+		$talkPage = WikiPage::factory( $page->getTitle()->getTalkPage() );
+		if ( !$talkPage->exists() ) {
+			return true;
+		}
+		$categories = $talkPage->getCategories();
+		foreach( $categories as $category ) {
+			$categoryPage = WikiPage::factory( $category );
+			foreach( $categoryPage->getCategories() as $category2 ) {
+				if ( $category2->getText() == "Articles by quality" ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	static function appendPage( &$page, &$out ) {
+		$out .= "# [[" . $page->getTitle()->getText() . "]]\n";
 	}
 }
