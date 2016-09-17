@@ -2,10 +2,14 @@
 
 class SpecialCategoryChecker extends SpecialPage {
 	public function __construct() {
-		parent::__construct( 'CategoryChecker', 'category-checker' );
+		parent::__construct( 'CategoryChecker', 'autopatrol' );
 	}
 	
 	function execute( $par ) {
+		if (  !$this->userCanExecute( $this->getUser() )  ) {
+			$this->displayRestrictionError();
+			return;
+		}
 		$request = $this->getRequest();
 		$output = $this->getOutput();
 		$this->setHeaders();
@@ -32,9 +36,11 @@ class SpecialCategoryChecker extends SpecialPage {
 			}
 		}
 		
+		$out = "";
 		foreach( $filtered as $aPage ) {
-			$output->addWikiText( "[[" . $aPage->getTitle()->getText() . "]]" . "\n" );
+			$out .= "# [[" . $aPage->getTitle()->getText() . "]]\n";
 		}
+		$output->addWikiText( $out );
 	}
 	
 	static function showPage( WikiPage $page ) {

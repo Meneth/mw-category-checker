@@ -5,6 +5,9 @@
 	"url": "https://github.com/meneth/mw-category-checker",
 	"description": "Gives a list of pages that haven't been added to a given category group (E.G., versioning)",
 	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
 	"AutoloadClasses": {
 		"SpecialCategoryChecker": "SpecialCategoryChecker.php"
 	},
