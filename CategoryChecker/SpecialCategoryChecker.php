@@ -14,8 +14,6 @@ class SpecialCategoryChecker extends SpecialPage {
 		$output = $this->getOutput();
 		$this->setHeaders();
 		
-		$output->addWikiText( "The following pages have no versioning category. Disambiguation, patch, wiki, and mod pages are excluded.\n" );
-		
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select(
 		"page",
@@ -26,6 +24,7 @@ class SpecialCategoryChecker extends SpecialPage {
 		]
 		);
 		
+		$output->addWikiText( "The following pages have no versioning category. Disambiguation, patch, wiki, and mod pages are excluded.\n" );
 		$out = "";
 		foreach( $res as $row ) {
 			$page = WikiPage::newFromID( $row->page_id );
@@ -37,12 +36,22 @@ class SpecialCategoryChecker extends SpecialPage {
 		$output->addWikiText( $out );
 		
 		$output->addWikiText( "\nThe following pages have no assessment.\n" );
-		
 		$out = "";
 		foreach( $res as $row ) {
 			$page = WikiPage::newFromID( $row->page_id );
 			
 			if ( self::showAssessmentPage( $page ) ) {
+				self::appendPage( $page, $out );
+			}
+		}
+		$output->addWikiText( $out );
+		
+		$output->addWikiText( "\nThe following pages are uncategorized (needing editing, verisoning, and hidden categories not considered).\n" );
+		$out = "";
+		foreach( $res as $row ) {
+			$page = WikiPage::newFromID( $row->page_id );
+			
+			if ( self::showCategoryPage( $page ) ) {
 				self::appendPage( $page, $out );
 			}
 		}
@@ -79,6 +88,24 @@ class SpecialCategoryChecker extends SpecialPage {
 			$categoryPage = WikiPage::factory( $category );
 			foreach( $categoryPage->getCategories() as $category2 ) {
 				if ( $category2->getText() == "Articles by quality" ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	static function showCategoryPage( WikiPage &$page ) {
+		$categories = $page->getCategories();
+		foreach( $categories as $category ) {
+			$categoryPage = WikiPage::factory( $category );
+			if ( !$categoryPage->getCategories()->valid() ) {
+				return false; // Assume uncategorized categories are valid
+			}
+			foreach( $categoryPage->getCategories() as $category2 ) {
+				if ( $category2->getText() != "Articles by version"
+				&& $category2->getText() != "Need editing"
+				&& $category2->getText() != "Hidden categories" ) {
 					return false;
 				}
 			}
