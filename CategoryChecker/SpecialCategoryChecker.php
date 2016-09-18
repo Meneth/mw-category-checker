@@ -116,4 +116,8 @@ class SpecialCategoryChecker extends SpecialPage {
 	static function appendPage( &$page, &$out ) {
 		$out .= "# [[" . $page->getTitle()->getText() . "]]\n";
 	}
+	
+	protected function getGroupName() {
+		return 'pages';
+	}
 }
