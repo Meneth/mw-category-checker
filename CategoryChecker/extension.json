@@ -1,6 +1,6 @@
 {
 	"name": "Category Checker",
-	"version": "1.1",
+	"version": "1.2",
 	"author": "Magne \"Meneth\" Skjæran",
 	"url": "https://github.com/meneth/mw-category-checker",
 	"description": "Gives a list of pages that haven't been added to a given category group (E.G., versioning)",
